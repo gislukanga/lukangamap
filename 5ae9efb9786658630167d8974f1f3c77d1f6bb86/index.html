@@ -1,0 +1,1710 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        
+		<!-- RESPONSIVE WEB DESIGN -->
+		<meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+		
+		<!-- ALLOW WEB APP TO BE RUN IN FULLSCREEN MODE - ANDROID -->
+        <meta name="mobile-web-app-capable" content="yes">
+		
+		<!-- ALLOW WEB APP TO BE RUN IN FULLSCREEN MODE - IOS -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+		
+		<!-- LINK TO CSS-FILES -->
+		
+			<!-- LEAFLET JS/CSS -->
+			<link rel="stylesheet" href="css/leaflet.css">
+			<script src="js/leaflet.js"></script>
+			
+			<!-- LEAFLET DRAW (GEOMETRY PLUGIN) -->
+			<link rel="stylesheet" href="css/leaflet-draw.css">
+			<script src="js/leaflet-draw.js"></script>
+
+			<!-- CSS -->
+			<link rel="stylesheet" href="css/L.Control.Locate.min.css">
+			<link rel="stylesheet" href="css/qgis2web.css">
+			<link rel="stylesheet" href="css/leaflet-control-condended-attribution.css">
+			<link rel="stylesheet" href="css/fontawesome-all.min.css">
+			<link rel="stylesheet" href="css/filter.css">
+			<link rel="stylesheet" href="css/nouislider.min.css">
+			<link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+			<link rel="stylesheet" href="css/leaflet-measure.css">
+			<link rel="stylesheet" href="css/leaflet.fullscreen.css">
+			<link rel="stylesheet" href="css/leaflet-sidebar.css">
+			
+			<!-- SIDEBAR-ICON "DRAW GEOMETRIES" -->
+			<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+		<!-- MAP TITLE (Browser-Window)-->
+        <title>Lukanga Water Webmap</title> 
+		  
+		<!-- LOGO LGWSC (Browser-Window) -->
+	    <link rel="shortcut icon" type="image/png" href="images/Lukanga_Logo.jpg">
+	   
+	   
+	    <!-- STYLES -->
+	   
+			<!-- MAP STYLE -->
+			<style>
+			html, body, #map {
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0;
+			}
+			</style>
+			
+			<!-- FIXED SIDEBAR HEIGHT -->
+			<!--
+			<style>
+				#sidebar {
+					height: 440px;
+					/*width: 80px;*/
+					z-index: 1000000;
+				}
+			</style>
+			-->
+			
+			<!-- DRAWN GEOMETRIES POPUP -->
+			<style>
+				.leaflet-popup-content {
+					background-color: #000000;
+					color: #fff;
+				}
+
+				.leaflet-popup-content input[type="text"] {
+					background-color: #000000;
+					color: #fff;
+					border: 1.5px solid #888;
+				  }
+	  
+				.leaflet-popup-content table {
+				  width: 100%;
+				}
+
+				.leaflet-popup-content table td {
+				  padding: 2px;
+				}
+
+				.leaflet-popup-content button {
+				  background-color: #888;
+				  color: #fff;
+				  border: #888;
+				  padding: 5px 5px;
+				  cursor: pointer;
+				}
+
+				.leaflet-popup-content button:hover {
+				  background-color: #888;
+				}
+			</style>
+			
+			<!-- DRAWN GEOMETRIES EXPORT BUTTON -->
+			<style>
+				#exportButton {
+					background-color: #fff;
+					color: #464646;
+					border: none;
+					padding: 9px 10px;
+					border-radius: 4px;
+					font-size: 13px;
+					cursor: pointer;
+				}
+
+				#exportButton:hover {
+					background-color: #31a354;
+				}
+			</style>
+			
+			<!-- DATA LAYERS LEGEND IMAGES -->
+			<style>
+			.circle.circle-customerconnection {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background-color: #005a32;
+				margin-right: 5px;
+			}
+
+			.circle.circle-valve {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background-color: #8c2d04;
+				margin-right: 5px;
+			}
+
+			.circle.circle-hydrant {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background-color: #0c2c84;
+				margin-right: 5px;
+			}
+
+			.square {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				background-color: #bdbdbd;
+				margin-right: 5px;
+			}
+
+			.rectangle {
+				display: inline-block;
+				width: 15px;
+				height: 5px;
+				background-color: rgba(53, 165, 209, 1.0);
+				margin-right: 5px;
+			}
+			
+			.circle.circle-leakage {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background-color: #d40b00;
+				margin-right: 5px;
+			}
+			</style>
+			
+			
+			<!-- BUTTON RESET FILTER -->
+			<style>
+			.filterbutton {
+				background-color: #fff;
+				color: #464646;
+				border: none;
+				padding: 3px 3px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 12px;
+				cursor: pointer;
+				border-radius: 4px;
+				margin-left: 10px;
+			}
+
+			.filterbutton:hover {
+				background-color: #ff0000;
+			}
+			</style>
+			
+			<style>
+			<!-- DRAWN GEOMETRIES POPUP DROPDOWN MENU -->
+			.input-wrapper select {
+				border: 1px solid #ccc !important;
+				border-radius: 3px !important;
+				background-color: #ff0000 !important;
+				color: #fff !important;
+			}
+			</style>
+			
+			
+    </head>
+
+<!--	/////////////////////////////
+	 ////		BODY		  ////
+	////////////////////////////// -->
+
+    <body>
+	
+		<!-- SIDEBAR -->
+		<div id="sidebar" class="sidebar collapsed">
+			
+			<!-- SIDEBAR BUTTONS -->
+				<div class="sidebar-tabs">	
+					<ul role="tablist">
+						<li><a href="#" role="tab" id="zoomInButton" title="Zoom In"><i class="fa fa-plus"></i></a></li>				<!-- Button Zoom In -->
+						<li><a href="#" role="tab" id="zoomOutButton" title="Zoom Out"><i class="fa fa-minus"></i></a></li>				<!-- Button Zoom Out -->
+						<li><a href="#" role="tab" id="fullscreenButton" title="Fullscreen"><i class="fa fa-arrows-alt"></i></a></li>	<!-- Button Fullscreen -->
+						<li><a href="#Data_Layers" role="tab" title="Data Layers"><i class="fa fa-database"></i></a></li>				<!-- Pane Data Layer -->
+						<li><a href="#Data_Filter" role="tab" title="Data Filter"><i class="fa fa-filter"></i></a></li>					<!-- Pane Data Filter -->
+						<li><a href="#" role="tab" id="locateButton" title="Locate"><i class="fa fa-map-marker"></i></a></li>			<!-- Button Geolocate -->
+						<li><a href="#LocationSearch" role="tab" title="Search a Location"><i class="fa fa-search"></i></a></li>		<!-- Button Location Search -->
+						<li><a href="#Measure" role="tab" title="Measurements"><i class="fas fa-ruler-combined"></i></a></li>			<!-- Pane Measurements -->
+						<li><a href="#Geometries" role="tab" title="Draw Geometries"><i class="fa fa-pencil"></i></a></li>				<!-- Pane Geometries -->
+						<li><a href="#" role="tab" id="printButton" title="Print"><i class="fa fa-print"></i></a></li>					<!-- Button Print -->
+						<li><a href="#Information" role="tab" title="Background Information"><i class="fa fa-info"></i></a></li>		<!-- Pane Background Information -->
+					</ul>
+				</div>
+
+			<!-- SIDEBAR PANES (Windows) -->
+			<!-- Only Buttons, where Panes (Menus) should open up -->
+				<div class="sidebar-content">
+				
+					<!-- Data Layers -->
+					<div class="sidebar-pane" id="Data_Layers">
+						<h1>Data Layers<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+						
+						<!-- Basemaps -->
+							<div id="basemapControl">
+							<h2>Basemaps</h2>
+								<div>
+								<input type="radio" name="basemap" id="basemap1" value="streets" checked>
+								<label for="basemap1" style="font-weight: bold;">OpenStreetMap</label>
+								</div>
+
+								<div>
+								<input type="radio" name="basemap" id="basemap2" value="satellite">
+								<label for="basemap2" style="font-weight: bold;">Satellite</label>
+								</div>
+								
+								<div>
+								<input type="radio" name="basemap" id="basemap3" value="topo">
+								<label for="basemap3" style="font-weight: bold;">Topography</label>
+								</div>
+								
+								<div>
+								<input type="radio" name="basemap" id="basemap4" value="osmhot">
+								<label for="basemap4" style="font-weight: bold;">OpenStreetMap II</label>
+								</div>
+							</div>
+						
+						<!-- Layer -->
+							<div id="LayerControl">
+							<h2>Layers</h2>
+							
+							<!-- Layer 1 - Waterpipe -->
+								<div>
+								<input type="checkbox" name="layers" id="layer1" value="layer_Data_Waterpipe" checked>
+								<label for="layer1" class="layer-label" style="font-weight: bold;">Waterpipe <span class="rectangle"></span></label>
+								</div>
+								
+							<!-- Layer 2 - Customer Connection -->
+								<div>
+								<input type="checkbox" name="layers" id="layer2" value="layer_Data_CustomerConnection">
+								<label for="layer2" class="layer-label" style="font-weight: bold;">Customer Connection <span class="circle circle-customerconnection"></span></label>
+								</div>
+								
+							<!-- Layer 3 - Valve -->
+								<div>
+								<input type="checkbox" name="layers" id="layer3" value="layer_Data_Valve">
+								<label for="layer3" class="layer-label" style="font-weight: bold;">Valve <span class="circle circle-valve"></span></label>
+								</div>
+								
+							<!-- Layer 4 - Hydrant -->
+								<div>
+								<input type="checkbox" name="layers" id="layer4" value="layer_Data_Hydrant">
+								<label for="layer4" class="layer-label" style="font-weight: bold;">Hydrant <span class="circle circle-hydrant"></span></label>
+								</div>
+								
+							<!-- Layer 5 - Leakage -->
+								<div>
+								<input type="checkbox" name="layers" id="layer5" value="layer_Data_Leakage">
+								<label for="layer5" class="layer-label" style="font-weight: bold;">Leakage <span class="circle circle-leakage"></span></label>
+								</div>
+							</div>	
+					</div>
+				
+				
+					<!-- Data Filter -->
+					<div class="sidebar-pane" id="Data_Filter">
+						<h1>Data Filter<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+						
+						<!-- Diameter (Slider) -->
+						<h2>Waterpipe Diameter</h2>
+						<div id="DataFilterControlsContainer">
+						<div id="div_Diameter" class="slider"></div>
+						<div class="filterlabel">Diameter: <span id="val_Diameter"></span><span class="filterbutton" onclick="resetDiameterFilter()"><span class="fas fa-repeat"></span></span></div>
+						
+						
+						<!-- Material (Select Box) -->
+						<div id="div_Material" class="filterselect">
+						<h2>Waterpipe Material</h2>
+						<select id="sel_Material" multiple size="10" onchange="filterFunc()"></select>
+						</div>
+						<div class="filterlabel"></div>
+						<div class="filterlabel" onclick="resetMaterialFilter()">Clear Filter</div>
+						</div>
+					</div>
+
+					<!-- Location Search -->
+					<div class="sidebar-pane" id="LocationSearch">					
+						<h1>Location Search<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+						<h2>Search For a Location</h2>
+						<div id="LocationSearchButtonContainer"></div>
+						
+					<div id="LocationCenter">
+						<h2 style="padding-top: 250px;">Location Center</h2>
+						<select id="locationDropdown">
+						<option value="LgWSC">LgWSC Headquarters</option>
+						<option value="Mulungushi">Mulungushi Water Plant</option>
+						<option value="Mukobeko">Mukobeko Water Plant</option>
+						</select>
+					</div>
+					</div>
+					
+
+					<!-- Measurements -->
+					<div class="sidebar-pane" id="Measure">					
+						<h1>Measurements<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+						<h2>Measure Distances and Areas</h2>
+						<div id="measurementButtonContainer"></div>
+					</div>
+					
+					<!-- Draw Geometries -->
+					<div class="sidebar-pane" id="Geometries">
+						<h1>Draw Geometries<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+						<h2>Draw & Export Geometries</h2>
+					<div id="DrawControlButtonContainer" style="height: 250px;"></div>
+					<h2>Export:</h2>
+					<button id="exportButton" onclick="geojsonExport()" class="btn btn-danger btn-sm text-light"><i class="fa fa-download"></i></button>
+					</div>
+					
+					<!-- Background Information -->
+					<div class="sidebar-pane" id="Information">
+						<h1>Background Information<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+						<h2>LgWSC Webmap</h2>
+							<p>The LgWSC Webmap, dedicated to the water distribution network, can provide numerous benefits for LgWSC.
+							It provides a comprehensive overview of the water distribution network and its associated assets, such as pipes, customer connections, valves and hydrants.
+							It enables the company to keep track of asset locations, conditions and maintenance history.
+							With the webmap, LgWSC can quickly respond to customer complaints and emergencies. By visualizing the network
+							and its current status on the map, technicians can efficiently locate the problem areas and take appropriate actions.</p>
+							
+						<h2>Functionalities</h2>
+						<p>There are various functionalities integrated into the webmap to assist users in their navigation and data interaction.
+						The webmap interface offers users the capability to navigate seamlessly across the map by clicking the respective buttons of the sidebar or using a mouse.
+						Key functionalities are <b>Zoom In</b>, <b>Zoom Out</b> and a <b>Fullscreen Option</b>.</p>
+						<p>With the <b>Data Layers Option</b>, users can choose between different background maps and choose the data layers they want to display.</p>
+						<p>The <b>Data Filter Option</b> employs attribute based filters to refine dataset views.</p>
+						<p>Geospatial precision is achieved through the options <b>Geolocation</b> and <b>Location Search</b>.</p>
+						<p><b>Measurement tools</b> are provided to assist users in quantifying distances and areas directly on the map</p>
+						<p>The <b>Draw/Export Geometries Option</b> enables users to create and customize geometries as well as attaching attributes to them for data enrichment.
+						Additionally, users can save these geometries as GeoJSON files for future reference or analysis.</p>
+						<p>The <b>Print Option</b> provides users with an efficient way to convert the visible area of the webmap into a PDF document.</p>
+						
+						<p><b>_________________________________</b></p>
+						<p><b>For all kinds of inquiries, please contact the LgWSC GIS Office!</b></p>
+						<img src="images/Lukanga_Logo.jpg" width="80" height="80">
+					</div>
+					
+				</div>
+		</div>
+
+		<!-- SIDEBAR END -->
+	
+
+		<!-- LOAD EXTERNAL FILES (JS & DATA) -->
+
+			<div id="map" class="sidebar-map"></div>
+			
+			<!-- LOAD JAVASCRIPT FILES -->
+			<script src="js/qgis2web_expressions.js"></script>
+			<script src="js/L.Control.Locate.min.js"></script>
+			<script src="js/leaflet.rotatedMarker.js"></script>
+			<script src="js/leaflet.pattern.js"></script>
+			<script src="js/leaflet-hash.js"></script>
+			<script src="js/Autolinker.min.js"></script>
+			<script src="js/leaflet-control-condended-attribution.js"></script>
+			<script src="js/rbush.min.js"></script>
+			<script src="js/labelgun.min.js"></script>
+			<script src="js/labels.js"></script>
+			<script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+			<script src="js/leaflet-measure.js"></script>
+			<script src="js/tailDT.js"></script>
+			<script src="js/nouislider.min.js"></script>
+			<script src="js/wNumb.js"></script>
+			<script src="js/leaflet.fullscreen.js"></script>
+			
+			<!-- LOAD GEOJSON DATA FILES -->
+			<script src="data/Data_Leakage.js"></script>					<!-- Leakage_2 -->
+			<script src="data/Data_Waterpipe.js"></script>					<!-- Data_Waterpipe -->
+			<script src="data/Data_Hydrant.js"></script>					<!-- Data_Hydrant -->
+			<script src="data/Data_Valve.js"></script>						<!-- Data_Valve -->
+			<script src="data/Data_CustomerConnection.js"></script>			<!-- Data_CustomerConnection -->
+			
+		
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->	
+	
+	<!-- SKRIPT -->
+        
+	<script>
+				
+		<!-- SET UP THE MAP -->
+		
+		<!-- Set default center coordinates (Kabwe) -->
+		var defaultLatitude = -14.448676352113744;
+		var defaultLongitude = 28.458495644237635;
+	
+		<!-- Initialize the Map -->
+        var map = L.map('map', {
+            zoomControl:false,
+			minZoom: 3,
+			zoomDelta: 1,
+			zoomSnap: 0.25,
+			fullscreenControl: false,
+			doubleClickZoom: false,
+			pushState: false,
+			}).setView([defaultLatitude, defaultLongitude], 13);
+
+	
+		<!-- Map attribution Leaflet -->
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+    
+		<!-- SCALE -->
+		var scale = L.control.scale({ position: 'topright'});
+			scale.addTo(map);
+			
+		<!-- MAP CURSOR AS CROSS -->
+		L.DomUtil.addClass(map._container,'move-cursor-enabled');
+		
+		<!-- LAYER HIGHLIGHTING -->
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+			// Define the common highlight style for all geometry types
+			var highlightStyle = {
+				color: '#00ff00',     // Green color for points
+				fillColor: '#00ff00', // Green color for polygons
+				Opacity: 0.5     	  // 50% opacity for polygons
+			};
+
+			// Set the same style for all geometry types
+			highlightLayer.setStyle(highlightStyle);
+        }
+
+		<!-- MEASUREMENT PLUGIN -->
+        var measureControl = new L.Control.Measure({
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares',
+			activeColor: '#ff0000',
+			completedColor: '#00ff00'
+        });
+        measureControl.addTo(map);
+		
+			document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+			.innerHTML = '';
+			document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+			.className += ' fas fa-ruler';
+			var bounds_group = new L.featureGroup([]);
+			function setBounds() {
+			}
+			
+			// Get the container of the measurement control button
+			var measurementButtonContainer = document.getElementById('measurementButtonContainer');
+			measurementButtonContainer.appendChild(measureControl.getContainer());
+
+		
+		<!-- LOCATION SEARCH PLUGIN -->
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: false,
+            position: 'topleft',
+            text: 'Search for a place',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+
+		// Get the container of the LocationSearch button
+		var LocationSearchButtonContainer = document.getElementById('LocationSearchButtonContainer');
+		LocationSearchButtonContainer.appendChild(osmGeocoder.getContainer());
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+	<!-- DATEN -->
+		
+		<!-- 1. Waterpipe -->
+		
+        function pop_Data_Waterpipe(feature, layer) {
+            layer.off({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            
+			var popupContent = 
+				'<table>\
+					<tr>\<strong><span style="font-size: 14px;">Waterpipe</span></strong></tr>\
+					<tr>\<td colspan="2"><hr style="border-top: 1px solid white;"></td>\
+                    <tr>\
+						<th scope="row">Object ID:</th>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Pipe Function:</th>\
+                        <td colspan="2">' + (feature.properties['PipeFunction'] !== null ? autolinker.link(feature.properties['PipeFunction'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Material:</th>\
+                        <td colspan="2">' + (feature.properties['Material'] !== null ? autolinker.link(feature.properties['Material'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Diameter:</th>\
+                        <td colspan="2">' + (feature.properties['Diameter'] !== null ? autolinker.link(feature.properties['Diameter'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+
+		<!-- Waterpipe Styling -->
+		
+        function style_Data_Waterpipe_0(feature) {
+            switch(String(feature.properties['Material'])) {
+                case ' ':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case '<Null>':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'AC':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'ACRM':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'ci':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'DI':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'FBRM':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'GI':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'HDPE':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'PVC':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'STRM':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'uPVC':
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_Data_Waterpipe',
+                opacity: 1,
+                color: 'rgba(53,165,209,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+		
+        map.createPane('pane_Data_Waterpipe');
+        map.getPane('pane_Data_Waterpipe').style.zIndex = 402;
+        map.getPane('pane_Data_Waterpipe').style['mix-blend-mode'] = 'normal';
+        var layer_Data_Waterpipe = new L.geoJson(json_Data_Waterpipe, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Data_Waterpipe',
+            layerName: 'layer_Data_Waterpipe',
+            pane: 'pane_Data_Waterpipe',
+            onEachFeature: pop_Data_Waterpipe,
+            style: style_Data_Waterpipe_0,
+        });
+        bounds_group.addLayer(layer_Data_Waterpipe);
+		
+		
+
+		<!-- 2. Hydrant -->
+		
+        function pop_Data_Hydrant(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+			
+            var popupContent = 
+				'<table>\
+					<tr>\<strong><span style="font-size: 14px;">Hydrant</span></strong></tr>\
+					<tr>\<td colspan="2"><hr style="border-top: 1px solid white;"></td>\
+                    <tr>\
+						<th scope="row">Object ID:</th>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Network:</th>\
+                        <td colspan="2">' + (feature.properties['Network'] !== null ? autolinker.link(feature.properties['Network'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Hydrant Location:</th>\
+                        <td colspan="2">' + (feature.properties['HydrantLocation'] !== null ? autolinker.link(feature.properties['HydrantLocation'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+		<!-- Hydrant Styling -->
+		
+        function style_Data_Hydrant_0() {
+            return {
+                pane: 'pane_Data_Hydrant',
+                radius: 2.5,
+                opacity: 0,
+                color: '#0c2c84',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 10.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: '#0c2c84',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Data_Hydrant');
+        map.getPane('pane_Data_Hydrant').style.zIndex = 403;
+        map.getPane('pane_Data_Hydrant').style['mix-blend-mode'] = 'normal';
+        
+		var layer_Data_Hydrant = new L.geoJson(json_Data_Hydrant, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Data_Hydrant',
+            layerName: 'layer_Data_Hydrant',
+            pane: 'pane_Data_Hydrant',
+            onEachFeature: pop_Data_Hydrant,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Data_Hydrant_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Data_Hydrant);
+
+		
+		
+		<!-- 3. Valve -->
+		
+        function pop_Data_Valve(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = 
+				'<table>\
+					<tr>\<strong><span style="font-size: 14px;">Valve</span></strong></tr>\
+					<tr>\<td colspan="2"><hr style="border-top: 1px solid white;"></td>\
+                    <tr>\
+						<th scope="row">Object ID:</th>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Network:</th>\
+                        <td colspan="2">' + (feature.properties['Network'] !== null ? autolinker.link(feature.properties['Network'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Valve Type:</th>\
+                        <td colspan="2">' + (feature.properties['ValveType'] !== null ? autolinker.link(feature.properties['ValveType'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Diameter:</th>\
+                        <td colspan="2">' + (feature.properties['Diameter'] !== null ? autolinker.link(feature.properties['Diameter'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+
+		<!-- Valve Styling -->
+		
+        function style_Data_Valve_0() {
+            return {
+                pane: 'pane_Data_Valve',
+                radius: 2.5,
+                opacity: 0,
+                color: '#8c2d04',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 10.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: '#8c2d04',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Data_Valve');
+        map.getPane('pane_Data_Valve').style.zIndex = 403;
+        map.getPane('pane_Data_Valve').style['mix-blend-mode'] = 'normal';
+        
+		var layer_Data_Valve = new L.geoJson(json_Data_Valve, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Data_Valve',
+            layerName: 'layer_Data_Valve',
+            pane: 'pane_Data_Valve',
+            onEachFeature: pop_Data_Valve,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Data_Valve_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Data_Valve);
+		
+		
+		
+		<!-- 4. Customer Connection -->
+		
+        function pop_Data_CustomerConnection(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = 
+				'<table>\
+					<tr>\<strong><span style="font-size: 14px;">Customer Connection</span></strong></tr>\
+					<tr>\<td colspan="2"><hr style="border-top: 1px solid white;"></td>\
+					<tr>\
+						<th scope="row">Object ID:</th>\
+                        <td colspan="2">' + (feature.properties['object_id_old'] !== null ? autolinker.link(feature.properties['object_id_old'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Network:</th>\
+                        <td colspan="2">' + (feature.properties['Network'] !== null ? autolinker.link(feature.properties['Network'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+                        <th scope="row">Account Number:</th>\
+                        <td>' + (feature.properties['Account_number'] !== null ? autolinker.link(feature.properties['Account_number'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Payment Status:</th>\
+                        <td colspan="2">' + (feature.properties['payment_status'] !== null ? autolinker.link(feature.properties['payment_status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					</table>';
+					
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+
+		<!-- Customer Connection Styling -->
+		
+        function style_Data_CustomerConnection_0() {
+            return {
+                pane: 'pane_Data_CustomerConnection',
+                radius: 2.5,
+                opacity: 0,
+                color: '#005a32',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 10.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: '#005a32',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Data_CustomerConnection');
+        map.getPane('pane_Data_CustomerConnection').style.zIndex = 403;
+        map.getPane('pane_Data_CustomerConnection').style['mix-blend-mode'] = 'normal';
+        var layer_Data_CustomerConnection = new L.geoJson(json_Data_CustomerConnection, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Data_CustomerConnection',
+            layerName: 'layer_Data_CustomerConnection',
+            pane: 'pane_Data_CustomerConnection',
+            onEachFeature: pop_Data_CustomerConnection,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Data_CustomerConnection_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Data_CustomerConnection);
+		
+		
+		
+		<!-- 5. Leakage -->
+		
+        function pop_Data_Leakage(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+			
+            var popupContent = 
+				'<table>\
+					<tr>\<strong><span style="font-size: 14px;">Leakage</span></strong></tr>\
+					<tr>\<td colspan="2"><hr style="border-top: 1px solid white;"></td>\
+                    <tr>\
+						<th scope="row">Object ID:</th>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Network:</th>\
+                        <td colspan="2">' + (feature.properties['Network'] !== null ? autolinker.link(feature.properties['Network'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Leakage Part:</th>\
+                        <td colspan="2">' + (feature.properties['LeakagePart'] !== null ? autolinker.link(feature.properties['LeakagePart'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Leak Rate:</th>\
+                        <td colspan="2">' + (feature.properties['LeakRate'] !== null ? autolinker.link(feature.properties['LeakRate'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+					<tr>\
+						<th scope="row">Leakage Status:</th>\
+                        <td colspan="2">' + (feature.properties['Leakage_Status'] !== null ? autolinker.link(feature.properties['Leakage_Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+		<!-- Leakage Styling -->
+		
+        function style_Data_Leakage_0() {
+            return {
+                pane: 'pane_Data_Leakage',
+                radius: 2.5,
+                opacity: 0,
+                color: '#d40b00',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 10.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: '#d40b00',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Data_Leakage');
+        map.getPane('pane_Data_Leakage').style.zIndex = 403;
+        map.getPane('pane_Data_Leakage').style['mix-blend-mode'] = 'normal';
+        
+		var layer_Data_Leakage = new L.geoJson(json_Data_Leakage, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Data_Leakage',
+            layerName: 'layer_Data_Leakage',
+            pane: 'pane_Data_Leakage',
+            onEachFeature: pop_Data_Leakage,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Data_Leakage_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Data_Leakage);
+		
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+
+		<!-- FILTER FUNCTION (Slider) -->
+		
+        var Filters = {"Diameter": "int","Material": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+			  if (lyr["options"]["dataVar"] === "json_Data_Waterpipe") {
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+		  }
+          });
+        }
+		
+		
+            document.getElementById("DataFilterControlsContainer").appendChild(
+                document.createElement("div"));
+            var div_Diameter = document.createElement("div");
+            div_Diameter.id = "div_Diameter";
+            div_Diameter.className = "slider";
+            document.getElementById("DataFilterControlsContainer").appendChild(div_Diameter);
+            
+			
+            var sel_Diameter = document.getElementById('div_Diameter');
+            noUiSlider.create(sel_Diameter, {
+                connect: true,
+                start: [0, 600],
+                step: 50,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 0,
+                max: 600
+                }
+            });
+            sel_Diameter.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_Diameter = document.getElementById('val_Diameter');
+            val_Diameter.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            
+			document.getElementById("DataFilterControlsContainer").appendChild(
+                document.createElement("div"));
+				
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////
+			
+            sel_Material.multiple = true;
+            sel_Material.size = 8;											// MATERIAL BOX SIZE
+            sel_Material.onchange = function(){filterFunc()};
+
+			var Material_options_str = "<option value='AC'>AC</option>";
+            Material_options_str  += '<option value="ACRM">ACRM</option>';
+            Material_options_str  += '<option value="DI">DI</option>';
+            Material_options_str  += '<option value="GI">GI</option>';
+            Material_options_str  += '<option value="HDPE">HDPE</option>';
+            Material_options_str  += '<option value="PVC">PVC</option>';
+            Material_options_str  += '<option value="STRM">STRM</option>';
+            Material_options_str  += '<option value="uPVC">uPVC</option>';
+            sel_Material.innerHTML = Material_options_str;
+            div_Material.appendChild(sel_Material);
+			
+
+		// Function to reset the Diameter filter
+		function resetDiameterFilter() {
+		sel_Diameter.noUiSlider.reset();
+		}
+
+		// Function to reset the Material filter
+		function resetMaterialFilter() {
+		  var options = document.getElementById("sel_Material").options;
+		  for (var i = 0; i < options.length; i++) {
+			options[i].selected = false;
+		  }
+		  filterFunc();
+		}
+
+		// Add the event listener to trigger the filter function when the select control changes
+		sel_Material.onchange = function () {
+		  filterFunc();
+		};
+
+
+	</script>
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////// -->		
+		
+		
+	<!-- INSERT & MANAGE SIDEBAR -->
+		
+	<script type="text/javascript" src="js/leaflet-sidebar.js"></script>
+		
+	<script>
+		
+		<!-- SIDEBAR -->
+		var sidebar = L.control.sidebar('sidebar', {
+			autopan: false,
+			closeButton: false,
+			container: 'sidebar',
+			position: 'left',
+		}).addTo(map);
+		
+		
+		<!-- ZOOM IN BUTTON -->
+			// Function to handle the zoom in button click
+			function handleZoomInClick() {
+				sidebar.close();
+			map.zoomIn();
+			}
+		
+			// Add event listeners to the zoom in button
+			document.getElementById('zoomInButton').addEventListener('click', handleZoomInClick);
+		
+		
+		<!-- ZOOM OUT BUTTON -->
+			// Function to handle the zoom out button click
+			function handleZoomOutClick() {
+				sidebar.close();
+			map.zoomOut();
+			}
+			
+			// Add event listeners to the zoom out button
+			document.getElementById('zoomOutButton').addEventListener('click', handleZoomOutClick);
+		
+		
+		<!-- FULLSCREEN BUTTON -->
+			// Function to handle the fullscreen button click
+			function handleFullscreenClick() {
+				sidebar.close();
+			map.toggleFullscreen();
+			}
+		
+			// Add event listeners to the fullscreen button
+			document.getElementById('fullscreenButton').addEventListener('click', handleFullscreenClick);
+		
+
+		<!-- LOCATE BUTTON -->
+			var userPopup = L.popup();
+		
+			// Function to handle the Locate User button click
+			function handleLocateUserClick() {
+				sidebar.close();
+			map.locate({ setView: true, maxZoom: 19, enableHighAccuracy: true });
+			}
+  
+			// Add event listeners to the Locate User button
+			document.getElementById('locateButton').addEventListener('click', handleLocateUserClick);
+  
+			// After the user's location is found, the following event will be triggered:
+			map.on('locationfound', function (e) {
+				var radius = e.accuracy / 2; // Calculate the radius for the circle
+
+				if (userPopup.isOpen()) {
+					userPopup.setLatLng(e.latlng)
+						.setContent('My Position');
+				} else {
+			
+				// Create a circle with the user's location as the center
+				var userCircle = L.circle(e.latlng, {
+					radius: radius,
+					fillColor: 'blue',  // Fill color of the circle
+					fillOpacity: 0.6,    // Opacity of the fill
+					color: '#blue',      // Border color of the circle
+					weight: 2,           // Border width
+					}).addTo(map);
+
+					// Create a popup at the user's location
+					userPopup.setLatLng(e.latlng)
+						.setContent('My Position')
+						.openOn(map);
+
+					userCircle.bindPopup(userPopup);
+				}
+			});
+
+  
+		<!-- PRINT BUTTON -->
+			// Function to handle the "Print" button click
+			function handlePrintClick() {
+				sidebar.close();
+				window.print();
+			}
+  
+			// Add event listeners to the Print button
+			document.getElementById('printButton').addEventListener('click', handlePrintClick);
+			
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	<!-- BASEMAP CHANGE -->
+
+		// Function to handle basemap change
+		function handleBasemapChange() {
+		  var basemap = document.querySelector('input[name="basemap"]:checked').value;
+
+		  // Remove the current basemap layer (if any)
+		  if (currentBasemap) {
+			map.removeLayer(currentBasemap);
+		  }
+
+		  // OPENSTREETMAP
+		  if (basemap === 'streets') {
+			currentBasemap = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			  attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> contributors', // Add proper attribution for the basemap provider
+			  minZoom: 1,
+			  maxZoom: 23,
+			  minNativeZoom: 0,
+			  maxNativeZoom: 19
+			}).addTo(map);
+			
+		// ESRI WORLD IMAGERY
+		} else if (basemap === 'satellite') {
+			currentBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+			  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community', // Add proper attribution for the basemap provider
+			  minZoom: 1,
+			  maxZoom: 17,
+			  minNativeZoom: 0,
+			  maxNativeZoom: 22
+			}).addTo(map);
+			
+		// OPEN TOPO MAP	
+		  } else if (basemap === 'topo') {
+			currentBasemap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+			  attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>', // Add proper attribution for the basemap provider
+			  minZoom: 1,
+			  maxZoom: 17,
+			  minNativeZoom: 0,
+			  maxNativeZoom: 17 // Adjust the maxNativeZoom as per the tile provider's specification
+			}).addTo(map);
+			
+		// OSM HOT	
+		   } else if (basemap === 'osmhot') {
+			currentBasemap = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+			  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a>', // Add proper attribution for the basemap provider
+			  minZoom: 1,
+			  maxZoom: 19,
+			  minNativeZoom: 0,
+			  maxNativeZoom: 19 // Adjust the maxNativeZoom as per the tile provider's specification
+			}).addTo(map);
+
+			 // Disable the streets checkbox when satellite is selected
+			  document.getElementById('basemap1').disabled = true;
+			}
+
+			// Enable all checkboxes initially
+			basemapInputs.forEach(function (input) {
+			  if (input.value !== basemap) {
+				input.disabled = false;
+				}
+			});
+		}
+
+		// Define a variable to keep track of the current basemap layer
+		var currentBasemap;
+
+		// Add event listeners to the basemap radio buttons
+		var basemapInputs = document.querySelectorAll('input[name="basemap"]');
+		basemapInputs.forEach(function (input) {
+		  input.addEventListener('change', handleBasemapChange);
+		});
+
+		// Initialize the map with a default basemap
+		handleBasemapChange();
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+	<!-- DATA LAYER CHANGE -->
+
+		// Function to handle layer change
+		function handleLayerChange() {
+		  // Remove all data layers first
+		  map.eachLayer(function (layer) {
+			if (layer instanceof L.GeoJSON) {
+			  map.removeLayer(layer);
+			}
+		  });
+
+		  // List of checkboxes for layers
+		  var layerInputs = document.querySelectorAll('input[name="layers"]');
+
+		  // List of selected layers
+		  var selectedLayerElements = Array.from(layerInputs).filter(function (input) {
+			return input.checked;
+		  });
+
+		  // Add the selected layers back to the map
+		  selectedLayerElements.forEach(function (input) {
+			var selectedLayerId = input.value;
+			switch (selectedLayerId) {
+			  case 'layer_Data_Waterpipe':
+				map.addLayer(layer_Data_Waterpipe);
+				break;
+			  case 'layer_Data_CustomerConnection':
+				map.addLayer(layer_Data_CustomerConnection);
+				break;
+			  case 'layer_Data_Valve':
+				map.addLayer(layer_Data_Valve);
+				break;
+			  case 'layer_Data_Hydrant':
+				map.addLayer(layer_Data_Hydrant);
+				break;
+			  case 'layer_Data_Leakage':
+				map.addLayer(layer_Data_Leakage);
+				break;
+			}
+		  });
+		}
+
+		// Add event listener to the Waterpipes layer checkbox
+		var waterpipesLayerInput = document.getElementById('layer1');
+		waterpipesLayerInput.addEventListener('change', handleLayerChange);
+
+		// Add event listeners to the other checkboxes
+		var layerInputs = document.querySelectorAll('input[name="layers"]');
+		layerInputs.forEach(function (input) {
+		  input.addEventListener('change', handleLayerChange);
+		});
+
+		// Initialize the map with the default layers (e.g., layer_Data_Waterpipe and layer_Data_CustomerConnection)
+		map.addLayer(layer_Data_Waterpipe);
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+	<!-- HANDLE FULLSCREEN CHANGE -->
+
+		// Function to handle the fullscreen button click
+		function handleFullscreenClick() {
+			sidebar.close();
+			var elem = document.documentElement;
+
+			if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+				// Currently in fullscreen mode, so exit fullscreen
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				} else if (document.webkitExitFullscreen) { /* Safari */
+					document.webkitExitFullscreen();
+				} else if (document.msExitFullscreen) { /* IE11 */
+					document.msExitFullscreen();
+				}
+			} else {
+				// Not in fullscreen mode, so enter fullscreen
+				if (elem.requestFullscreen) {
+					elem.requestFullscreen();
+				} else if (elem.webkitRequestFullscreen) { /* Safari */
+					elem.webkitRequestFullscreen();
+				} else if (elem.msRequestFullscreen) { /* IE11 */
+					elem.msRequestFullscreen();
+				}
+			}
+		}
+
+		// Add event listener to the fullscreen button
+		document.getElementById('fullscreenButton').addEventListener('click', handleFullscreenClick);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	<!-- HANDLE DRAW GEOMETRIES -->
+
+		var drawnItems = new L.FeatureGroup();
+			map.addLayer(drawnItems);
+
+		var drawControl = new L.Control.Draw({
+			draw: {
+			circle: {
+					shapeOptions: {
+					color: '#31a354',      // Set the color for drawing previews
+					fillColor: '#31a354',  // Set the fill color for drawing previews
+					fillOpacity: 0.2       // Set the fill opacity for drawing previews
+					},
+					},
+			marker: {
+					shapeOptions: {
+					color: '#31a354',      // Set the color for drawing previews
+					fillColor: '#31a354',  // Set the fill color for drawing previews
+					fillOpacity: 0.2       // Set the fill opacity for drawing previews
+					},
+					},
+			polygon: {
+					shapeOptions: {
+					color: '#31a354',      // Set the color for drawing previews
+					fillColor: '#31a354',  // Set the fill color for drawing previews
+					fillOpacity: 0.2       // Set the fill opacity for drawing previews
+					},
+					},
+			polyline: {
+					shapeOptions: {
+					color: '#31a354',      // Set the color for drawing previews
+					fillColor: '#31a354',  // Set the fill color for drawing previews
+					fillOpacity: 0.2       // Set the fill opacity for drawing previews
+					},
+					},
+			rectangle: {
+					shapeOptions: {
+					color: '#31a354',      // Set the color for drawing previews
+					fillColor: '#31a354',  // Set the fill color for drawing previews
+					fillOpacity: 0.2       // Set the fill opacity for drawing previews
+					},
+					},
+			circlemarker: false,
+			},
+			
+			edit: {
+				featureGroup: drawnItems,
+				edit: true,
+				remove: true
+			  }
+			});
+
+			map.addControl(drawControl);
+			
+			
+			// Get the container of the LocationSearch button
+			var DrawControlButtonContainer = document.getElementById('DrawControlButtonContainer');
+			DrawControlButtonContainer.appendChild(drawControl.getContainer());
+
+			var isDrawing = false;
+
+			map.on('draw:drawstart', function (event) {
+			  isDrawing = true;   
+			});
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	<!-- DRAW GEOMETRIES POPUP -->
+
+		<!-- POPUP -->
+		function createPopupContent() {
+			// Create a div object for the popup. Defines the structure of the popup
+			const divider = document.createElement("div");
+			divider.innerHTML = `
+			<div class="popup-header">
+				<strong>Drawn Geometry</strong>
+			</div>
+			<br>
+			<div class="input-wrapper" style="margin-bottom: 10px; margin-left: 39px;">
+				<label for='nameField'><strong>Type:</strong></label>
+				<select id='nameField'>
+					<option value='Waterpipe'>Waterpipe</option>
+					<option value='Customer'>Customer</option>
+					<option value='Valve'>Valve</option>
+					<option value='Hydrant'>Hydrant</option>
+					<option value='Leakage'>Leakage</option>
+					<option value='Other'>Other</option>
+				</select>
+			</div>
+			<div class="input-wrapper" style="margin-bottom: 10px;">
+				<label for='descriptionField'><strong>Description:</strong></label>
+				<input type='text' id='descriptionField'>
+			</div>
+			<div class="input-wrapper" style="margin-bottom: 0px; margin-left: 10px">
+				<label for='commentField'><strong>Comment:</strong></label>
+				<input type='text' id='commentField'>
+			</div>
+			<br>
+			`;
+				
+			return divider;
+		}
+
+
+	<!-- HANDLE POPUP CONTENT -->
+
+		map.on('draw:created', function (event) {
+			var layer = event.layer;
+			var feature = layer.feature = layer.feature || {};
+				
+			feature.type = feature.type || "Feature";
+			
+			var props = feature.properties = feature.properties || {};
+				
+			var popupContent = createPopupContent();
+
+			var popup = L.popup().setContent(popupContent);
+			layer.bindPopup(popup).openPopup();
+
+			// Parse the data from the textfields to the feature properties of the geometry
+			function listenToSaveButton() {
+				var fieldsData = {
+					'Type': popupContent.querySelector('#nameField').value,
+					'description': popupContent.querySelector('#descriptionField').value,
+					'comment': popupContent.querySelector('#commentField').value
+				};
+				return fieldsData;
+			}
+
+			drawnItems.addLayer(layer);
+
+			layer.getPopup().on('remove', function () {
+				// Assign the returned fieldsData directly to feature.properties
+				feature.properties = listenToSaveButton();
+			});
+		});
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////                                          
+
+	<!-- EXPORT -->
+
+		// Initialize the counter
+		let downloadCounter = 1;
+
+		// Export to GeoJSON File
+		function geojsonExport() {
+		  let nodata = '{"type":"FeatureCollection","features":[]}';  
+		  let jsonData = (JSON.stringify(drawnItems.toGeoJSON()));
+		  let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonData);
+		  let datenow = new Date();
+		  let datenowstr = datenow.toLocaleDateString('en-GB');
+		  
+		  // Generate an export file name with an incremental counter
+		  let exportFileDefaultName = 'webmap_export_' + datenowstr + '_' + downloadCounter + '.geojson';
+		  downloadCounter++; // Increment the counter for the next download
+		  
+		  let linkElement = document.createElement('a');
+		  linkElement.setAttribute('href', dataUri);
+		  linkElement.setAttribute('download', exportFileDefaultName);
+		  
+		  if (jsonData == nodata) {
+			alert('No features are drawn');
+		  } else {
+			linkElement.click();
+		  }
+		}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	<!--  Location Center-->
+
+		// Location data with coordinates
+				var locations = {
+					LgWSC: { lat: -14.444800106701194, lon: 28.446826007008127 },
+					Mulungushi: { lat: -14.363915820114912, lon: 28.631140609387785 },
+					Mukobeko:	{lat:-14.427452059509989,lon:28.398623842769553},
+				};
+
+				// Get the reference to the dropdown element
+				var dropdown = document.getElementById('locationDropdown');
+
+				// Attach a change event listener to the dropdown
+				dropdown.addEventListener('change', function() {
+					var selectedLocation = this.value;
+					if (locations[selectedLocation]) {
+						var { lat, lon } = locations[selectedLocation];
+						map.flyTo([lat, lon], 20, {
+							animate: true,
+							duration: 8
+						});
+					}
+				});
+
+
+
+	</script>
+		
+    </body>
+</html>
