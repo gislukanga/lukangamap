@@ -69,6 +69,7 @@
 			</style>
 			-->
 			
+			
 			<!-- DRAWN GEOMETRIES POPUP -->
 			<style>
 				.leaflet-popup-content {
@@ -207,6 +208,45 @@
 			}
 			</style>
 			
+			<style>
+			
+			<!-- Layer Search Styling Func001 -->
+			
+            #layerSearchValue {
+                display: block;
+                margin: 10px auto;
+                width: 90%;
+                padding: 10px;
+                background-color: #f8f9fa;
+                border: 1px solid #ced4da;
+                border-radius: 5px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            #layerSearchValue input[type="text"] {
+                width: 100%;
+                padding: 8px;
+                margin: 5px 0;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            
+            #layerSearchValue button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            
+            #layerSearchValue button:hover {
+                background-color: #0056b3;
+            }
+
+			</style>
 			
     </head>
 
@@ -228,13 +268,19 @@
 						<li><a href="#Data_Layers" role="tab" title="Data Layers"><i class="fa fa-database"></i></a></li>				<!-- Pane Data Layer -->
 						<li><a href="#Data_Filter" role="tab" title="Data Filter"><i class="fa fa-filter"></i></a></li>					<!-- Pane Data Filter -->
 						<li><a href="#" role="tab" id="locateButton" title="Locate"><i class="fa fa-map-marker"></i></a></li>			<!-- Button Geolocate -->
-						<li><a href="#LocationSearch" role="tab" title="Search a Location"><i class="fa fa-search"></i></a></li>		<!-- Button Location Search -->
+						<li><a href="#LocationSearch" role="tab" title="Search a Location"><i class="fa fa-search"></i></a></li>        <!-- Button Location Search -->
+						<li><a href="#LayerSearch" role="tab" id="layerSearch" title="Layer-Search"><i class="fa fa-bars"></i></a></li> <!-- Button Layer Search-->
 						<li><a href="#Measure" role="tab" title="Measurements"><i class="fas fa-ruler-combined"></i></a></li>			<!-- Pane Measurements -->
 						<li><a href="#Geometries" role="tab" title="Draw Geometries"><i class="fa fa-pencil"></i></a></li>				<!-- Pane Geometries -->
 						<li><a href="#" role="tab" id="printButton" title="Print"><i class="fa fa-print"></i></a></li>					<!-- Button Print -->
 						<li><a href="#Information" role="tab" title="Background Information"><i class="fa fa-info"></i></a></li>		<!-- Pane Background Information -->
+                        
+                        
+
 					</ul>
 				</div>
+			
+
 
 			<!-- SIDEBAR PANES (Windows) -->
 			<!-- Only Buttons, where Panes (Menus) should open up -->
@@ -342,6 +388,8 @@
 					</div>
 					</div>
 					
+					
+					
 
 					<!-- Measurements -->
 					<div class="sidebar-pane" id="Measure">					
@@ -385,6 +433,38 @@
 						<p><b>For all kinds of inquiries, please contact the LgWSC GIS Office!</b></p>
 						<img src="images/Lukanga_Logo.jpg" width="80" height="80">
 					</div>
+					
+					<!-- Layer Search Functionality Func001 -->
+					
+					<div class="sidebar-pane" id="LayerSearch">
+					    
+                        <h1>Customer Connection Search<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                        <p>Search objects by attribute value</p>
+                        
+                        <form id=layerSearchValue>
+                            
+                            <label for="searchValue">
+                                Value to search:
+                            </label>
+                            <br>
+                            <input type="search" id="searchValue" name="searchValue" autocomplete="off">
+                            <br>
+                            <br>
+                            
+                            <label for="attributeToSearch">
+                                Attribute to search:  
+                            </label>
+                            <select id="attributeToSearch" name="attributeToSearch">
+                            <option value="accountNumber">Account Number</option>
+                            </select>
+                            <br>
+                            <br>
+                            <button type="button" onclick="layerSearchFunction()">
+                                Search
+                            </button>
+                        </form>
+                        
+                    </div>
 					
 				</div>
 		</div>
@@ -1052,6 +1132,68 @@
 		
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 		
+
+        <!-- Layer Searching Func001 -->
+        
+        // Layer search function ahs to be implemented here. The function is called when pressing the "Search" button in the layer search popup
+        
+        function layerSearchFunction(){
+            
+            // Get the account number input value
+            var acc_number = document.getElementById('searchValue').value;
+            console.log('Element with ID: ' + acc_number + ' searched');
+        
+            if (!acc_number) {
+                console.log('No input entered');
+                return;
+            }
+        
+            // Loop through the features in the CustomerConnection layer
+            layer_Data_CustomerConnection.eachLayer(function(layer) {
+                if (layer.feature.properties.AccountNumber === acc_number) {
+                    // Get the coordinates of the matching feature
+                    var coordinates = layer.feature.geometry.coordinates;
+                    
+                    // Add a red circle around the object
+                    
+                    var userCircle = L.circle(coordinates, {
+    					radius: 10,
+    					fillColor: 'blue',  // Fill color of the circle
+    					fillOpacity: 0.6,    // Opacity of the fill
+    					color: '#blue',      // Border color of the circle
+    					weight: 2,           // Border width
+					}).addTo(map);
+        
+                    // Pan and zoom the map to the feature's location
+                    map.flyTo([coordinates[1], coordinates[0]], 18, {
+                        animate: true,
+                        duration: 1.5
+                    });
+        
+                    // Optionally, highlight the feature
+                    layer.openPopup(); // Open the feature's popup if available
+                    // Optionally close the sidebar after searching
+                    sidebar.close();
+                    //console.log(`Feature found: Coordinates [${coordinates[1]}, ${coordinates[0]}]`);
+                } else {
+                    //console.log('Element with ID: ' + acc_number + ' not found');
+                    // Add red text showing that the element was not found
+                    
+                }
+            });
+            
+        }
+		
+
+        const inputField = document.getElementById('searchValue');
+        
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+              event.preventDefault(); // Prevents the default action (e.g., form submission)
+              console.log('Enter key press disabled');
+            }
+        });
+        
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -1670,6 +1812,10 @@
 			linkElement.click();
 		  }
 		}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

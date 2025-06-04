@@ -11,7 +11,7 @@
 /* SMARTPHONE */	
   @media (max-width: 428px) {
 	.sidebar {
-	  height: 297px; }}
+	  height: 322px; }}
 	  
   @media (max-width: 428px) {
 	.sidebar.collapsed {
@@ -20,7 +20,7 @@
 /* TABLET */	  
   @media (min-width: 428px) and (max-width: 768px) {
 	.sidebar {
-	  height: 352px; }}
+	  height: 382px; }}
 
   @media (min-width: 428px) and (max-width: 768px) {
 	.sidebar.collapsed {
@@ -124,6 +124,7 @@
         text-align: center; }
   .sidebar-tabs > ul + ul {
     bottom: 0; }
+
 
 .sidebar-content {
   position: absolute;
